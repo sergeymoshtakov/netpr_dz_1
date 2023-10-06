@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
+using System.IO;
+using System.Text.Json;
+using System.Data;
 
 namespace NerProgramming
 {
@@ -80,14 +83,39 @@ namespace NerProgramming
                     while(true)
                     {
                         Socket socket = listenSocket.Accept();
+                        /*
                         StringBuilder stringBuilder = new StringBuilder();
                         do
                         {
                             int n = socket.Receive(buffer);
                             stringBuilder.Append(Encoding.UTF8.GetString(buffer, 0, n));
-                        } while (socket.Available > 0);
-                        String str = stringBuilder.ToString();
+                        } while (socket.Available > 0);  
+                        String str = stringBuilder.ToString(); */
+                        MemoryStream memoryStream = new MemoryStream();
+                        do
+                        {
+                            int n = socket.Receive(buffer);
+                            memoryStream.Write(buffer, 0, n);
+                        } while (socket.Available > 1);
+                        String str = Encoding.UTF8.GetString(memoryStream.ToArray());
+                        ServerResponse response = new ServerResponse();
+                        var clientRequest = JsonSerializer.Deserialize<ClientRequest>(str);
+                        if (clientRequest == null) 
+                        { 
+                            str = "Error decoding JSON: " + str;
+                            response.Status = "400 Bad Request";
+                            response.Data = "Error Decoding JSON";
+                        }
+                        else 
+                        { 
+                            str = clientRequest.Data;
+                            response.Status = "200 OK";
+                            response.Data = "Received " + DateTime.Now;
+                        }
                         Dispatcher.Invoke(() => ServerLog.Text += $"{DateTime.Now} {str}\n");
+                        String responce = "Received " + DateTime.Now;
+                        socket.Send(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(response)));
+                        socket.Close();
                     }
                 }
                 catch (Exception ex)

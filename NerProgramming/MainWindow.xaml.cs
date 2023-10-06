@@ -32,7 +32,7 @@ namespace NerProgramming
 
         private void ClientButton_Click(object sender, RoutedEventArgs e)
         {
-
+            new ClientWindow().Show();
         }
     }
 }
