@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
+using System.Data;
 
 namespace NerProgramming
 {
@@ -25,16 +27,21 @@ namespace NerProgramming
     public partial class ClientWindow : Window
     {
         private Random random = new Random();
-        private IPEndPoint endPoint = null;
+        private IPEndPoint endPoint;
+        private DateTime lastSyncMoment;
+        private bool isServerOn;
         public ClientWindow()
         {
             InitializeComponent();
+            lastSyncMoment = default;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoginTextBox.Text = "User" + random.Next(100);
             MessageTextBox.Text = "Hello, all";
+            isServerOn = true;
+            Sync();
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
@@ -44,13 +51,17 @@ namespace NerProgramming
             {
                 endPoint = new IPEndPoint(
                     IPAddress.Parse(address[0]),
-                    Convert.ToInt32(address[1])
-                );
+                    Convert.ToInt32(address[1]));
+
                 new Thread(SendMessage).Start(
                     new ClientRequest
                     {
                         Command = "Message",
-                        Data = LoginTextBox.Text + ": " + MessageTextBox.Text
+                        Message = new ChatMessage()
+                        {
+                            Login = LoginTextBox.Text,
+                            Text = MessageTextBox.Text
+                        }
                     }
                 );
             }
@@ -107,6 +118,17 @@ namespace NerProgramming
                 else
                 {
                     str = response.Status;
+                    if (response.Massages != null)
+                    {
+                        foreach(var massage in response.Massages)
+                        {
+                            str += " " + massage + " " + massage.getDate() + "\n";
+                            if(massage.Moment > lastSyncMoment)
+                            {
+                                lastSyncMoment = massage.Moment;
+                            }
+                        }
+                    }
                     new Task(() => {
                         Dispatcher.Invoke(() =>
                         {
@@ -128,8 +150,46 @@ namespace NerProgramming
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                if (isServerOn)  // клієнт намагається підключитись тричі
+                {  // і тричі виводить повідомлення. Реагуємо тільки на перше
+                    isServerOn = false;
+                    clientSocket.Dispose();
+                    MessageBox.Show(ex.Message);
+                    isServerOn = true;
+                }
+
             }
+        }
+
+        private async void Sync()
+        {
+            if (isServerOn)
+            {
+                String[] address = HostTextBox.Text.Split(':');
+                try
+                {
+                    endPoint = new IPEndPoint(
+                        IPAddress.Parse(address[0]),
+                        Convert.ToInt32(address[1]));
+
+                    new Thread(SendMessage).Start(
+                        new ClientRequest
+                        {
+                            Command = "Check",
+                            Message = new ChatMessage()
+                            {
+                                Moment = lastSyncMoment
+                            }
+                        }
+                    );
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            await Task.Delay(10000);
+            Sync();
         }
     }
 }

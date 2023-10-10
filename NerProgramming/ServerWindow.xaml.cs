@@ -17,6 +17,7 @@ using System.Threading;
 using System.IO;
 using System.Text.Json;
 using System.Data;
+using System.Runtime.Remoting.Messaging;
 
 namespace NerProgramming
 {
@@ -27,8 +28,10 @@ namespace NerProgramming
     {
         private Socket listenSocket;
         private IPEndPoint endPoint;
+        public LinkedList<ChatMessage> messages;
         public ServerWindow()
         {
+            messages = new LinkedList<ChatMessage>();
             InitializeComponent();
         }
 
@@ -98,22 +101,40 @@ namespace NerProgramming
                             memoryStream.Write(buffer, 0, n);
                         } while (socket.Available > 1);
                         String str = Encoding.UTF8.GetString(memoryStream.ToArray());
+                        // декодуємо з JSON, знаючи, що це ClientRequest
                         ServerResponse response = new ServerResponse();
-                        var clientRequest = JsonSerializer.Deserialize<ClientRequest>(str);
+                        ClientRequest clientRequest = null;
+                        try { clientRequest = JsonSerializer.Deserialize<ClientRequest>(str); }
+                        catch { }
+                        bool needLog = true;
                         if (clientRequest == null) 
                         { 
                             str = "Error decoding JSON: " + str;
                             response.Status = "400 Bad Request";
-                            response.Data = "Error Decoding JSON";
+                            // response.Data = "Error Decoding JSON";
                         }
                         else 
-                        { 
-                            str = clientRequest.Data;
-                            response.Status = "200 OK";
-                            response.Data = "Received " + DateTime.Now;
+                        {
+                            if (clientRequest.Command.Equals("Message")) 
+                            {
+                                clientRequest.Message.Moment = DateTime.Now;
+                                messages.AddLast(clientRequest.Message);
+                                str = clientRequest.Message.ToString();
+                                response.Status = "200 OK";
+                            }
+                            else if (clientRequest.Command.Equals("Check"))
+                            {
+                                response.Status = "200 OK";
+                                response.Massages = messages.Where(m => m.Moment > clientRequest.Message.Moment);
+                                needLog = false;
+                            }
+                            // response.Data = "Received " + clientRequest.Message.Moment;
                         }
-                        Dispatcher.Invoke(() => ServerLog.Text += $"{DateTime.Now} {str}\n");
-                        String responce = "Received " + DateTime.Now;
+                        if (needLog)
+                        {
+                            Dispatcher.Invoke(() => ServerLog.Text += $"{DateTime.Now} {str}\n");
+                        }
+                        // String responce = "Received " + DateTime.Now;
                         socket.Send(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(response)));
                         socket.Close();
                     }

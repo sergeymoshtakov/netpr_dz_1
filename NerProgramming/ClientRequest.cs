@@ -9,6 +9,6 @@ namespace NerProgramming
     public class ClientRequest
     {
         public String Command { get; set; } 
-        public String Data { get; set; }    
+        public ChatMessage Message { get; set; }    
     }
 }
