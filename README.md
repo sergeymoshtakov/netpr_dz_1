@@ -7,3 +7,7 @@
 ![фото программы](screenshots/result3.jpg)
 
 ![фото программы](screenshots/result4.jpg)
+
+## Отображение даты отправки на клиентах
+
+![фото программы](screenshots/result4.jpg)
