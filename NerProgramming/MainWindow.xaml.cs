@@ -23,6 +23,8 @@ namespace NerProgramming
         public MainWindow()
         {
             InitializeComponent();
+            MessageBox.Show(App.getConfiguration("smtp:host"));
+
         }
 
         private void ServerButton_Click(object sender, RoutedEventArgs e)
@@ -33,6 +35,11 @@ namespace NerProgramming
         private void ClientButton_Click(object sender, RoutedEventArgs e)
         {
             new ClientWindow().Show();
+        }
+
+        private void SendEmailButton_Click(object sender, RoutedEventArgs e)
+        {
+            new EmailWindow().ShowDialog();
         }
     }
 }
