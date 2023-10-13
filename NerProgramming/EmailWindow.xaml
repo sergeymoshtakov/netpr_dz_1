@@ -15,7 +15,12 @@
             <Label Content="Thema"/>
             <TextBox x:Name="textBoxThema" Text="Hello From WPF" />
         </StackPanel>
+        <Label Content = "{x:Static local:App.Host}"/>
         <TextBox x:Name="textBoxMessage" TextWrapping="Wrap" Text="Hello my friend!"/>
         <Button x:Name="SendButton" Content="Send" Margin="20 10" Click="SendButton_Click"/>
+        <TextBox x:Name="textBoxHtml" Text="&lt;h2>Добрий день!&lt;/h2> Вас вітає програма &lt;b style='color:tomato'>автоматичного&lt;/b> надсилання листів" TextWrapping="Wrap"/>
+        <Button x:Name="SendButton2" Content="Надіслати" Margin="20 10" Click="SendButton2_Click"/>
+        <TextBox x:Name="textBoxApprove" Text="&lt;h2>Добрий день!&lt;/h2> Ваш код &lt;b style='color:tomato'>{x:Static local:App.RandNum}&lt;/b> для підтвердження" TextWrapping="Wrap"/>
+        <Button x:Name="SendButton3" Content="Надіслати" Margin="20 10" Click="SendButton3_Click"/>
     </StackPanel>
 </Window>

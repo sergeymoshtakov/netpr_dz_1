@@ -15,6 +15,7 @@ namespace NerProgramming
     {
         private static String configFilename = "email-settings.json";
         private static JsonElement? settings = null;
+        public static String Host = getConfiguration("smtp:host");
         public static String getConfiguration(String name)
         {
             if(settings == null)
