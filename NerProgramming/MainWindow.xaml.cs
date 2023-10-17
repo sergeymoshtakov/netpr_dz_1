@@ -41,5 +41,10 @@ namespace NerProgramming
         {
             new EmailWindow().ShowDialog();
         }
+
+        private void ConfirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            new AuthWindow().ShowDialog();
+        }
     }
 }

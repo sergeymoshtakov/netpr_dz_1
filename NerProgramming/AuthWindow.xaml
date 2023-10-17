@@ -5,8 +5,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NerProgramming"
         mc:Ignorable="d"
-        Title="AuthWindow" Height="450" Width="800">
+        Title="AuthWindow" Height="200" Width="400">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Label Content="Автентифікація" Grid.ColumnSpan="2" 
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="20" FontWeight="DemiBold"/>
+            <Label Content="Email" Grid.Row="1" VerticalAlignment="Center" />
+            <TextBox x:Name="textboxEmail" Grid.Row="1" Grid.Column="1" 
+                     VerticalAlignment="Center" Text="moshtakov.s@gmail.com" />
+            <Label Content="Password" Grid.Row="2" VerticalAlignment="Center" />
+            <PasswordBox x:Name="textboxPassword" Grid.Row="2" Grid.Column="1" 
+                     VerticalAlignment="Center" />
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" 
+                        x:Name="ConfirmContainer"
+                        Visibility="Hidden" Orientation="Horizontal">
+                <Label Content="Email code:"/>
+                <TextBox x:Name="textboxCode" MinWidth="50"/>
+                <Button x:Name="ConfirmButton" Content="Enter" Click="ConfirmButton_Click"/>
+            </StackPanel>
+            <Button x:Name="SigninButton" Content="Sign In" Grid.Row="4" Click="SigninButton_Click"/>
+            <Button x:Name="SignupButton" Content="Sign Up" Grid.Row="4" Grid.Column="1" Click="SignupButton_Click"/>
+        </Grid>
+        <TextBlock x:Name="logBlock" Grid.Column="1"/>
     </Grid>
 </Window>
