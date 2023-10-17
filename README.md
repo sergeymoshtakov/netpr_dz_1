@@ -15,3 +15,7 @@
 ## Отображение ошибки при парсинге JSON
 
 ![фото программы](screenshots/errormessage.jpg)
+
+## Сообщение с кодом подтверждения
+
+![фото программы](screenshots/confirmationmessage.jpg)
