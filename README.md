@@ -19,3 +19,7 @@
 ## Сообщение с кодом подтверждения
 
 ![фото программы](screenshots/confirmationmessage.jpg)
+
+## Сообщение в случае успешного входа
+
+![фото программы](screenshots/authentication-suceed.jpg)
