@@ -217,6 +217,9 @@
     <Compile Include="EmailWindow.xaml.cs">
       <DependentUpon>EmailWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HTTPWindow.xaml.cs">
+      <DependentUpon>HTTPWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ServerResponse.cs" />
     <Compile Include="ServerWindow.xaml.cs">
       <DependentUpon>ServerWindow.xaml</DependentUpon>
@@ -230,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EmailWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HTTPWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -46,5 +46,10 @@ namespace NerProgramming
         {
             new AuthWindow().ShowDialog();
         }
+
+        private void HTTPButton_Click(object sender, RoutedEventArgs e)
+        {
+            new HTTPWindow().ShowDialog();
+        }
     }
 }

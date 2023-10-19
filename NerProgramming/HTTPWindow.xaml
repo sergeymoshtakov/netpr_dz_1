@@ -1,0 +1,17 @@
+﻿<Window x:Class="NerProgramming.HTTPWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NerProgramming"
+        mc:Ignorable="d"
+        Title="HTTPWindow" Height="450" Width="300">
+    <StackPanel Orientation="Vertical">
+        <Button x:Name="Button1" Content="Get" Click="Button1_Click"/>
+        <Button x:Name="CurrencyCourseXML" Content="Currency Course XML" Click="CurrencyCourseXML_Click"/>
+        <Button x:Name="CurrencyCourseJSON" Content="Currency Course JSON" Click="CurrencyCourseJSON_Click"/>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" Height="350">
+            <TextBlock x:Name="textBlock1" FontFamily="Courier New" TextWrapping="Wrap"/>
+        </ScrollViewer>
+    </StackPanel>
+</Window>

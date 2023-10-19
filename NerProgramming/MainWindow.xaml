@@ -22,5 +22,10 @@
                 Margin="20 15"
                 Padding="0 4 0 7"
                 Click="ConfirmButton_Click"/>
+        <Button x:Name="HTTPButton" 
+            Content="HTTP"
+            Margin="20 15"
+            Padding="0 4 0 7"
+            Click="HTTPButton_Click"/>
     </StackPanel>
 </Window>
