@@ -27,3 +27,7 @@
 ## Вывод курса валют
 
 ![фото программы](screenshots/currency.jpg)
+
+## Вывод криптовалют
+
+![фото программы](screenshots/cryptocurrency.jpg)
