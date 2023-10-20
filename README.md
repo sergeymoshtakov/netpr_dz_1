@@ -23,3 +23,7 @@
 ## Сообщение в случае успешного входа
 
 ![фото программы](screenshots/authentication-suceed.jpg)
+
+## Вывод курса валют
+
+![фото программы](screenshots/currency.jpg)
