@@ -23,6 +23,8 @@ namespace NerProgramming
     /// </summary>
     public partial class HTTPWindow : Window
     {
+        private List<NBURate> rates;
+        private string[] popularCc = { "XAU", "USD", "EUR" };
         public HTTPWindow()
         {
             InitializeComponent();
@@ -70,6 +72,52 @@ namespace NerProgramming
                 textBlock1.Text += $"1 {currency.txt} = {currency.rate} Гривень\r\n";
             }
         }
+
+        private async void ratesButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(rates == null)
+            {
+                await loadRatesAsync();
+            }
+            if(rates == null)
+            {
+                return;
+            }
+            foreach (var rate in rates)
+            {
+                textBlock1.Text += $"{rate.cc} {rate.txt} {rate.rate}\n";
+            }
+        }
+        private async Task loadRatesAsync()
+        {
+            HttpClient httpClient = new HttpClient();
+            String body = await httpClient.GetStringAsync("https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json");
+            rates = JsonSerializer.Deserialize<List<NBURate>>(body);
+            if (rates == null)
+            {
+                MessageBox.Show("Error desirializing");
+                return;
+            }
+        }
+
+        private async void popular_Click(object sender, RoutedEventArgs e)
+        {
+            if (rates == null)
+            {
+                await loadRatesAsync();
+            }
+            if (rates == null)
+            {
+                return;
+            }
+            foreach (var rate in rates)
+            {
+                if (popularCc.Contains(rate.cc))
+                {
+                    textBlock1.Text += $"{rate.cc} {rate.txt} {rate.rate}\n";
+                }
+            }
+        }
     }
 
     public static class MyExtensions { 
@@ -80,6 +128,15 @@ namespace NerProgramming
     }
 
     public class Currency
+    {
+        public int r030 { get; set; }
+        public string txt { get; set; }
+        public double rate { get; set; }
+        public string cc { get; set; }
+        public string exchangedate { get; set; }
+    }
+
+    public class NBURate
     {
         public int r030 { get; set; }
         public string txt { get; set; }

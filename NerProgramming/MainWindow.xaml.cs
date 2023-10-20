@@ -51,5 +51,10 @@ namespace NerProgramming
         {
             new HTTPWindow().ShowDialog();
         }
+
+        private void CryptoButton_Click(object sender, RoutedEventArgs e)
+        {
+            new CryptoWindow().ShowDialog();
+        }
     }
 }

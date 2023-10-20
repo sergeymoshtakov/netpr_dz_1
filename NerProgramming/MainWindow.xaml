@@ -27,5 +27,10 @@
             Margin="20 15"
             Padding="0 4 0 7"
             Click="HTTPButton_Click"/>
+        <Button x:Name="CryptoButton" 
+            Content="Crypto currency"
+            Margin="20 15"
+            Padding="0 4 0 7"
+            Click="CryptoButton_Click"/>
     </StackPanel>
 </Window>

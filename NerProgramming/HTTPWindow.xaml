@@ -10,6 +10,8 @@
         <Button x:Name="Button1" Content="Get" Click="Button1_Click"/>
         <Button x:Name="CurrencyCourseXML" Content="Currency Course XML" Click="CurrencyCourseXML_Click"/>
         <Button x:Name="CurrencyCourseJSON" Content="Currency Course JSON" Click="CurrencyCourseJSON_Click"/>
+        <Button x:Name="ratesButton" Content="Rates" Click="ratesButton_Click"/>
+        <Button x:Name="popular" Content="EUR USD XAU" Click="popular_Click"/>
         <ScrollViewer VerticalScrollBarVisibility="Visible" Height="350">
             <TextBlock x:Name="textBlock1" FontFamily="Courier New" TextWrapping="Wrap"/>
         </ScrollViewer>
