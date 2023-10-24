@@ -31,3 +31,7 @@
 ## Вывод криптовалют
 
 ![фото программы](screenshots/cryptocurrency.jpg)
+
+## График криптовалют
+
+![фото программы](screenshots/graphic.jpg)
