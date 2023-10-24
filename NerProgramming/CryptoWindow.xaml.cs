@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -47,35 +48,139 @@ namespace NerProgramming
             var response = JsonSerializer.Deserialize<CoincapResponse>(
                 await _httpClient.GetStringAsync("/v2/assets?limit=10")
             );
-            if(response == null)
+            if (response == null)
             {
                 MessageBox.Show("Error desirializing");
                 return;
             }
             CoinsData.Clear();
-            foreach(var coinData in response.data)
+            foreach (var coinData in response.data)
             {
                 CoinsData.Add(coinData);
             }
         }
 
-        private void FrameworkElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void FrameworkElement_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if(sender is ListViewItem item)
+            if (sender is ListViewItem item)
             {
-                if (lastSelectedItem != null && lastSelectedItem != item)
+                // if (lastSelectedItem != null && lastSelectedItem != item)
+                // {
+                // lastSelectedItem.Background = Brushes.Transparent;
+                // }
+
+                // item.Background = Brushes.Aqua;
+                // lastSelectedItem = item;
+
+                if (item.DataContext is CoinData coinData)
                 {
-                    lastSelectedItem.Background = Brushes.Transparent;
+                    // MessageBox.Show($"ID ассета: {data.id}");
+                    await showHistory(coinData);
+                    item.Background = Brushes.Aqua;
                 }
 
-                item.Background = Brushes.Aqua;
-                lastSelectedItem = item;
-
-                if (item.DataContext is CoinData data)
-                {
-                    MessageBox.Show($"ID ассета: {data.id}");
-                }
             }
+        }
+
+        private async Task showHistory(CoinData coinData)
+        {
+            String body = await _httpClient.GetStringAsync(
+                $"/v2/assets/{coinData.id}/history?interval=d1"
+            );
+            var response = JsonSerializer.Deserialize<HistoryResponse>(body);
+            if (response == null || response.data == null)
+            {
+                MessageBox.Show("Error");
+                return;
+            }
+            long minTime, maxTime;
+            double minPrice, maxPrice;
+            minPrice = maxPrice = response.data[0].price;
+            minTime = maxTime = response.data[0].time;
+            foreach(HistoryItem item in response.data)
+            {
+                if(item.time < minTime) { minTime =  item.time; }
+                if (item.time > maxTime) { maxTime = item.time; }
+                if (item.price < minPrice) { minPrice = item.price; }
+                if (item.price > maxPrice) { maxPrice = item.price; }
+            }
+            double yOffset = 30.0;
+            double grafH = Graph.ActualHeight - yOffset;
+            double x0 = (response.data[0].time - minTime) * Graph.ActualWidth / (maxTime - minTime);
+            double y0 = grafH - (response.data[0].price - minPrice) * Graph.ActualHeight / (maxPrice - minPrice);
+            Graph.Children.Clear();
+
+            foreach (HistoryItem item in response.data)
+            {
+                double x = (item.time - minTime) * Graph.ActualWidth / (maxTime - minTime);
+                double y = grafH - (item.price - minPrice) * Graph.ActualHeight / (maxPrice - minPrice);
+                Dispatcher.Invoke(() => DrawLine(x0,y0,x,y));
+                if(item.time == maxTime)
+                {
+                    Graph.Children.Add(new TextBlock
+                    {
+                        FontSize = 18,
+                        Foreground = Brushes.Red,
+                        FontStyle = FontStyles.Italic,
+                        FontWeight = FontWeights.Bold,
+                        Text = DateTime.Parse(item.date, null, System.Globalization.DateTimeStyles.RoundtripKind).ToString("dd.MM.yyyy"),
+                        Margin = new Thickness(x, y, 0, 0)
+                    });
+                }
+                if (item.time == minTime)
+                {
+                    Graph.Children.Add(new TextBlock
+                    {
+                        FontSize = 18,
+                        Foreground = Brushes.Green,
+                        FontStyle = FontStyles.Italic,
+                        FontWeight = FontWeights.Bold,
+                        Text = DateTime.Parse(item.date, null, System.Globalization.DateTimeStyles.RoundtripKind).ToString("dd.MM.yyyy"),
+                        Margin = new Thickness(x, y, 0, 0)
+                    });
+                }
+                if (item.price == minPrice)
+                {
+                    Graph.Children.Add(new TextBlock
+                    {
+                        FontSize = 18,
+                        Foreground = Brushes.Green,
+                        FontStyle = FontStyles.Italic,
+                        FontWeight = FontWeights.Bold,
+                        Text = item.price.ToString(),
+                        Margin = new Thickness(x, y, 0, 0)
+                    });
+                }
+                if (item.price == maxPrice)
+                {
+                    Graph.Children.Add(new TextBlock
+                    {
+                        FontSize = 18,
+                        Foreground = Brushes.Red,
+                        FontStyle = FontStyles.Italic,
+                        FontWeight = FontWeights.Bold,
+                        Text = item.price.ToString(),
+                        Margin = new Thickness(x, y, 0, 0)
+                    });
+                }
+                x0 = x;
+                y0 = y;
+            }
+            DrawLine(0, grafH, Graph.ActualWidth, grafH, new SolidColorBrush(Colors.Purple));
+        }
+
+        private void DrawLine(double x1, double y1, double x2, double y2, Brush brush = null)
+        {
+            brush = brush == null ? new SolidColorBrush(Colors.Black) : brush;
+            Graph.Children.Add(new Line
+            {
+                X1 = x1,
+                Y1 = y1,
+                X2 = x2,
+                Y2 = y2,
+                Stroke = brush,
+                StrokeThickness = 2
+            });
         }
     }
 
@@ -98,5 +203,19 @@ namespace NerProgramming
         public string changePercent24Hr { get; set; }
         public string vwap24Hr { get; set; }
         public string explorer { get; set; }
+    }
+
+    public class HistoryItem
+    {
+        public string priceUsd { get; set;}
+        public long time { get; set; }
+        public string date {  get; set; }
+        public double price => Convert.ToDouble(priceUsd, CultureInfo.InvariantCulture);
+    }
+
+    public class HistoryResponse
+    {
+        public List<HistoryItem> data { get; set; }
+        public long timestamp { get; set; }
     }
 }

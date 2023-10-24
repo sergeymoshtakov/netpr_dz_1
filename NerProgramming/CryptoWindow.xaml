@@ -20,21 +20,19 @@
 
             <Label Content="Графіки курсів криптовалют" FontSize="22" FontWeight="DemiBold" HorizontalContentAlignment="Center" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"/>
 
-                <ListView ItemsSource="{Binding CoinsData}" Grid.Row="1" Grid.Column="0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Label Content="{Binding Path=name}"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.Resources>
-                        <Style TargetType="ListViewItem">
-                            <EventSetter Event="MouseDoubleClick" Handler="FrameworkElement_MouseLeftButtonDown"/>
-                        </Style>
-                    </ListView.Resources>
-                </ListView>
-
-                <Canvas Grid.Row="1" Grid.Column="1"/>
-
+            <ListView ItemsSource="{Binding CoinsData}" Grid.Row="1" Grid.Column="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Path=name}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.Resources>
+                    <Style TargetType="ListViewItem">
+                        <EventSetter Event="MouseDoubleClick" Handler="FrameworkElement_MouseLeftButtonDown"/>
+                    </Style>
+                </ListView.Resources>
+            </ListView>
+            <Canvas Grid.Row="1" Grid.Column="1" x:Name="Graph"/>
         </Grid>
     </StackPanel>
 </Window>
